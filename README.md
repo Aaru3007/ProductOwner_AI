@@ -123,7 +123,7 @@ Feature: User Login
     Then an error message "Invalid credentials" should be displayed
     And the user should remain on the login page
 ```
-## Junit
+## JUnit
 
 ```java
 import org.junit.jupiter.api.*;
