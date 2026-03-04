@@ -3,81 +3,19 @@
 ### Product Owner (PO) Agent
 
 ```
-                    ┌──────────┐
-                    │  START   │
-                    └────┬─────┘
-                         ▼
-                ┌────────────────┐
-                │ Ingest & Parse │  Load Jira story / uploaded doc
-                └────────┬───────┘
-                         ▼
-                ┌────────────────┐
-                │ RAG Retrieval  │  Pull relevant context from vector store
-                └────────┬───────┘
-                         ▼
-                ┌────────────────┐
-                │ Story Drafting │  LLM generates structured story
-                │ (LLM Node)    │  with acceptance criteria
-                └────────┬───────┘
-                         ▼
-                ┌────────────────┐
-                │ Quality Check  │  Validate completeness:
-                │ (LLM Node)    │  - Has title, description, AC
-                │                │  - Follows INVEST principles
-                │                │  - Edge cases covered
-                └────┬───────┬───┘
-                     │       │
-              passes ▼       ▼ fails (loop back)
-        ┌──────────────┐  ┌──────────────────┐
-        │ Human Review │  │ Refine Story     │──► back to Quality Check
-        │ (UI approve) │  └──────────────────┘
-        └──────┬───────┘
-               ▼
-        ┌──────────────┐
-        │   OUTPUT     │  Finalized story JSON
-        └──────────────┘
+Ingest & Parse  →  RAG Retrieval  →  Story Drafting  →  Quality Check
+                                                            │
+                                              passes? ──────┼────── fails?
+                                                │           │          │
+                                          Human Review    Refine  ─── ↩ (loop back)
+                                                │
+                                             OUTPUT
 ```
-
 ### Test Case Agent 
 
 ```
-                    ┌──────────┐
-                    │  START   │
-                    └────┬─────┘
-                         ▼
-              ┌─────────────────────┐
-              │ Receive Story JSON  │
-              └────────┬────────────┘
-                       ▼
-              ┌─────────────────────┐
-              │ Code Context Tool   │  Parse source code (Python/Java)
-              │ (AST extraction)    │  to understand existing classes,
-              │                     │  methods, signatures
-              └────────┬────────────┘
-                       ▼
-          ┌────────────┴────────────┐
-          ▼                         ▼
-  ┌───────────────┐        ┌───────────────────┐
-  │ Gherkin Gen   │        │ JUnit Gen         │
-  │ (BDD .feature)│        │ (unit test .java) │
-  └───────┬───────┘        └────────┬──────────┘
-          │                         │
-          ▼                         ▼
-  ┌───────────────┐        ┌───────────────────┐
-  │ Validate      │        │ Validate          │
-  │ Gherkin syntax│        │ compiles / lints  │
-  └───────┬───────┘        └────────┬──────────┘
-          │                         │
-          └────────────┬────────────┘
-                       ▼
-              ┌─────────────────────┐
-              │ Human Review (UI)   │
-              └────────┬────────────┘
-                       ▼
-              ┌─────────────────────┐
-              │ OUTPUT              │
-              │ .feature + .java    │
-              └─────────────────────┘
+Receive Story  →  Parse Code Context  →  ┌─ Gherkin Generator ─┐  →  Validate  →  OUTPUT
+                  (AST extraction)       └─ JUnit Generator  ──┘
 ```
 
 **Output examples:**
@@ -194,15 +132,20 @@ agentic-sdlc/
 ```
 ## Agentic SDLC Platform
 
-Layer 1 — Presentation	React UI components (upload, story reviewer, test viewer, Jira import)
+Layer 1 — Presentation	
+React UI components (upload, story reviewer, test viewer, Jira import)
 
-Layer 2 — API	FastAPI REST + WebSocket streaming + Auth
+Layer 2 — API	
+FastAPI REST + WebSocket streaming + Auth
 
-Layer 3 — Agent Orchestration	LangGraph with PO Agent (ingest → RAG → draft → quality loop) and Test Case Agent (story → code context → Gherkin/JUnit → validate)
+Layer 3 — Agent Orchestration	
+LangGraph with PO Agent (ingest → RAG → draft → quality loop) and Test Case Agent (story → code context → Gherkin/JUnit → validate)
 
-Layer 4 — Tools & Services	RAG pipeline, Python/Java parsers, Jira client, code analyzer
+Layer 4 — Tools & Services	
+RAG pipeline, Python/Java parsers, Jira client, code analyzer
 
-Layer 5 — Data & Infrastructure	ChromaDB, SQLite/PostgreSQL, file storage, OpenAI API
+Layer 5 — Data & Infrastructure	
+ChromaDB, SQLite/PostgreSQL, file storage, OpenAI API
 
 ## Final Deliverable
 
