@@ -82,6 +82,8 @@
 
 **Output examples:**
 
+## JSON
+
 ```json
 {
   "story_id": "PO-42",
@@ -98,6 +100,7 @@
   "dependencies": ["PO-41"]
 }
 ```
+## Gherkins
 
 ```gherkin
 Feature: User Login
@@ -120,6 +123,7 @@ Feature: User Login
     Then an error message "Invalid credentials" should be displayed
     And the user should remain on the login page
 ```
+## Junit
 
 ```java
 import org.junit.jupiter.api.*;
@@ -191,9 +195,13 @@ agentic-sdlc/
 ## Agentic SDLC Platform
 
 Layer 1 — Presentation	React UI components (upload, story reviewer, test viewer, Jira import)
+
 Layer 2 — API	FastAPI REST + WebSocket streaming + Auth
+
 Layer 3 — Agent Orchestration	LangGraph with PO Agent (ingest → RAG → draft → quality loop) and Test Case Agent (story → code context → Gherkin/JUnit → validate)
+
 Layer 4 — Tools & Services	RAG pipeline, Python/Java parsers, Jira client, code analyzer
+
 Layer 5 — Data & Infrastructure	ChromaDB, SQLite/PostgreSQL, file storage, OpenAI API
 
 ## Final Deliverable
